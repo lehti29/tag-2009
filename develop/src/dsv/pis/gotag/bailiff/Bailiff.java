@@ -62,7 +62,7 @@ public class Bailiff
     protected java.lang.reflect.Method idMethod; //Ref. to getID
     protected String getIDName;*/
     //protected Class [] idParms; // Class reflection of arguments
-    //test
+    //test2
 
     protected void debugMsg (String s) {
         if (debug) {
