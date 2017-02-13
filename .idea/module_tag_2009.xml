@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_tag_2009" default="compile.module.tag_2009">
+  <dirname property="module.tag_2009.basedir" file="${ant.file.module_tag_2009}"/>
+  
+  <property name="module.jdk.home.tag_2009" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.tag_2009" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.tag_2009" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.tag_2009" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="tag_2009.output.dir" value="undefined"/>
+  <property name="tag_2009.testoutput.dir" value="undefined"/>
+  
+  <path id="tag_2009.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="tag_2009.module.production.classpath">
+    <path refid="${module.jdk.classpath.tag_2009}"/>
+  </path>
+  
+  <path id="tag_2009.runtime.production.module.classpath"/>
+  
+  <path id="tag_2009.module.classpath">
+    <path refid="${module.jdk.classpath.tag_2009}"/>
+  </path>
+  
+  <path id="tag_2009.runtime.module.classpath"/>
+  
+  
+  <patternset id="excluded.from.module.tag_2009">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.tag_2009">
+    <patternset refid="excluded.from.module.tag_2009"/>
+  </patternset>
+  
+  <path id="tag_2009.module.sourcepath">
+    <dirset dir="${module.tag_2009.basedir}/../../tag 2009">
+      <include name="develop/src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.tag_2009" depends="compile.module.tag_2009.production,compile.module.tag_2009.tests" description="Compile module tag 2009"/>
+  
+  <target name="compile.module.tag_2009.production" depends="register.custom.compilers" description="Compile module tag 2009; production classes">
+    <mkdir dir="${tag_2009.output.dir}"/>
+    <javac2 destdir="${tag_2009.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.tag_2009}/javac">
+      <compilerarg line="${compiler.args.tag_2009}"/>
+      <bootclasspath refid="tag_2009.module.bootclasspath"/>
+      <classpath refid="tag_2009.module.production.classpath"/>
+      <src refid="tag_2009.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.tag_2009"/>
+    </javac2>
+    
+    <copy todir="${tag_2009.output.dir}">
+      <fileset dir="${module.tag_2009.basedir}/../develop/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.tag_2009.tests" depends="register.custom.compilers,compile.module.tag_2009.production" description="compile module tag 2009; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.tag_2009" description="cleanup module">
+    <delete dir="${tag_2009.output.dir}"/>
+    <delete dir="${tag_2009.testoutput.dir}"/>
+  </target>
+</project>
