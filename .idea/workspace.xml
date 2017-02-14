@@ -2,7 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6b04d7a-d444-4120-9707-8d65cfdf9015" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff$IDListener.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff$IDListener.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff$agitator.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff$agitator.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/BailiffInterface.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/BailiffInterface.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff_Skel.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff_Skel.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff_Stub.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/bailiff/Bailiff_Stub.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/dexter/Dexter$1.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/dexter/Dexter$1.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/dexter/Dexter.class" afterPath="$PROJECT_DIR$/develop/build/dsv/pis/gotag/dexter/Dexter.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/dist/Bailiff-dl.jar" afterPath="$PROJECT_DIR$/develop/dist/Bailiff-dl.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/dist/Bailiff.jar" afterPath="$PROJECT_DIR$/develop/dist/Bailiff.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/dist/Dexter.jar" afterPath="$PROJECT_DIR$/develop/dist/Dexter.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/cbs/Bailiff-dl.jar" afterPath="$PROJECT_DIR$/test/cbs/Bailiff-dl.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/cbs/Bailiff.jar" afterPath="$PROJECT_DIR$/test/cbs/Bailiff.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/cbs/Dexter.jar" afterPath="$PROJECT_DIR$/test/cbs/Dexter.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/Bailiff.java" afterPath="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/Bailiff.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffInterface.java" afterPath="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffInterface.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java" afterPath="$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java" />
     </list>
     <ignored path="tag 2009.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -23,11 +40,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Bailiff.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Bailiff.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/Bailiff.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="64" column="11" selection-start-line="64" selection-start-column="11" selection-end-line="64" selection-end-column="11" />
+            <state relative-caret-position="360">
+              <caret line="341" column="52" selection-start-line="341" selection-start-column="52" selection-end-line="341" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -38,10 +55,10 @@
       <file leaf-file-name="BailiffInterface.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="36" column="33" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
+            <state relative-caret-position="568">
+              <caret line="110" column="86" selection-start-line="110" selection-start-column="86" selection-end-line="110" selection-end-column="86" />
               <folding>
-                <element signature="e#0#3915#0" expanded="false" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -59,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Dexter.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Dexter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-326">
-              <caret line="237" column="50" selection-start-line="237" selection-start-column="50" selection-end-line="237" selection-end-column="50" />
+            <state relative-caret-position="405">
+              <caret line="124" column="28" selection-start-line="124" selection-start-column="28" selection-end-line="124" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -161,8 +178,8 @@
         <option value="$PROJECT_DIR$/develop/build.xml" />
         <option value="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffFrame.java" />
         <option value="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffInterface.java" />
-        <option value="$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java" />
         <option value="$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/Bailiff.java" />
+        <option value="$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java" />
       </list>
     </option>
   </component>
@@ -772,12 +789,12 @@
       <updated>1485292582951</updated>
       <workItem from="1485292584300" duration="1261000" />
       <workItem from="1485865366470" duration="43458000" />
-      <workItem from="1486830460759" duration="3447000" />
+      <workItem from="1486830460759" duration="13352000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="48166000" />
+    <option name="totallyTimeSpent" value="58071000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1" y="22" width="1489" height="892" extended-state="0" />
@@ -785,7 +802,7 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32806805" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298292" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -858,7 +875,7 @@
         <state relative-caret-position="465">
           <caret line="36" column="33" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
           <folding>
-            <element signature="e#0#3915#0" expanded="false" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -894,6 +911,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -911,16 +929,6 @@
           <caret line="25" column="13" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="36" column="33" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#3915#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -999,10 +1007,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java">
+    <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/BailiffInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-326">
-          <caret line="237" column="50" selection-start-line="237" selection-start-column="50" selection-end-line="237" selection-end-column="50" />
+        <state relative-caret-position="568">
+          <caret line="110" column="86" selection-start-line="110" selection-start-column="86" selection-end-line="110" selection-end-column="86" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1011,8 +1019,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/bailiff/Bailiff.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="64" column="11" selection-start-line="64" selection-start-column="11" selection-end-line="64" selection-end-column="11" />
+        <state relative-caret-position="360">
+          <caret line="341" column="52" selection-start-line="341" selection-start-column="52" selection-end-line="341" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/develop/src/dsv/pis/gotag/dexter/Dexter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="124" column="28" selection-start-line="124" selection-start-column="28" selection-end-line="124" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

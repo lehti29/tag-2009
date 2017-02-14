@@ -113,6 +113,18 @@ public class Dexter implements Serializable
         return this.it;
     }
     public UUID getID(){ return this.id; }
+    public boolean tag(){
+        //check if still in same bailiff.
+        this.it = true;
+        debugMsg("Inside tag method with ID: " + this.id + " , am I it? " + this.it);
+        return this.it;
+    }
+    public boolean unTag(){
+        //check if still in same bailiff.
+        this.it = false;
+        debugMsg("Inside untag method with ID: " + this.id + " , am I it? " + this.it);
+        return !this.it;
+    }
 
     /**
      * Sleep snugly and safely not bothered by interrupts.
@@ -170,11 +182,11 @@ public class Dexter implements Serializable
             // The restraint sleep is just there so we don't get hyperactive
             // and confuse the slow human beings.
 
-            debugMsg ("Entering restraint sleep.");
+            //debugMsg ("Entering restraint sleep.");
 
             snooze (5000);
 
-            debugMsg ("Leaving restraint sleep.");
+            //debugMsg ("Leaving restraint sleep.");
 
             // Enter a loop in which Dexter tries to find some Bailiffs.
 
@@ -220,26 +232,13 @@ public class Dexter implements Serializable
 
                 // Try to ping the selected Bailiff.
 
-                debugMsg ("Trying to ping...");
-                String [] names = null;
-                String it = new String();
-                boolean anyAgentIt = false;
+                //debugMsg ("Trying to ping...");
+
                 try {
                     if (obj instanceof BailiffInterface) {
                         bfi = (BailiffInterface) obj;
                         String response = bfi.ping (); // Ping it
                         debugMsg (response);
-                        debugMsg("There are " + bfi.getNumberOfAgents() + " in this bailiff");
-                        names = bfi.getNames();
-                        for(int i = 0; i < names.length; i++){
-                            if(bfi.isIt(names[i])) {
-                                debugMsg(names[i] + "is it");
-                                it = names[i];
-                                anyAgentIt = true;
-                            }
-                            else debugMsg(names[i] + "is not it");
-                        }
-                        debugMsg("Is someone it here? " + anyAgentIt);
                         accepted = true;	// Oh, it worked!
                     }
                 }
@@ -251,23 +250,47 @@ public class Dexter implements Serializable
 
                 debugMsg (accepted ? "Accepted." : "Not accepted.");
 
+                String [] names = null;
+                String agentIt = new String();
+                boolean anyAgentIt = false;
+                int numberOfAgents = bfi.getNumberOfAgents();
+                debugMsg("There are " + numberOfAgents + " in this bailiff");
+                names = bfi.getNames();
+                for(int i = 0; i < names.length; i++){
+                    if(bfi.isIt(names[i])) {
+                        debugMsg(names[i] + " is it");
+                        agentIt = names[i];
+                        anyAgentIt = true;
+                        break; //we have already found out that someone is it
+                    }
+                }
+                //debugMsg("Is someone it here? " + anyAgentIt);
+                boolean nextOne = false;
+                //Here comes some conditions that need to be considered before migrating.
+                if(numberOfAgents <= 1 && bfi.amIHere(this.id.toString()) && this.it){
+                    //Means that I'm it and alone or no one in this bailiff. Not good
+                    nextOne = true;
+                }
+                if(!this.it && anyAgentIt){
+                    //means that i'm not it but someone is it in this bailiff. Not good
+                    nextOne = true;
+                }
+
                 // If the ping failed, delete that Bailiff from the array and
                 // try another. The current (idx) entry in the list of service items
                 // is replaced by the last item in the list, and the list length
                 // is decremented by one.
-
-                if (accepted == false) {
-                    System.out.println("NOT Trying to jump");
+                //Or if we don't want to jump to this bailiff for some reason
+                if (accepted == false || nextOne) {
                     svcItems[idx] = svcItems[nofItems - 1];
                     nofItems -= 1;
                     continue;		// Back to top of while-loop.
                 }
                 else {
                     debugMsg ("Trying to jump...");
-                    //bfi.amIHere(this.id.toString());
                     // This is the spot where Dexter tries to migrate.
                     try {
-                        bfi.migrate (this, "topLevel", new Object [] {});
+                        bfi.migrate (this, "topLevel", new Object [] {}, this.it, this.id.toString());
                         SDM.terminate ();	// SUCCESS
                         if (!noFace) {
                             dexFace.stopAnimation ();

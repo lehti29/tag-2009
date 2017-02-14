@@ -24,7 +24,7 @@ import net.jini.lookup.entry.*;
 import dsv.pis.gotag.util.*;
 
 import dsv.pis.gotag.dexter.Dexter;
-
+import java.lang.reflect.Method;
 /**
  * The Bailiff is a Jini service that provides an execution environment
  * for agents. The service it provides is this:
@@ -172,7 +172,7 @@ public class Bailiff
             //First try to get the agents id
             try {
                 myID = getID(myObj);
-                System.out.println("Got id: " + myID);
+                //System.out.println("Got id: " + myID);
             } catch (NoSuchMethodException e) {
                 System.out.println("Didn't get id...");
                 e.printStackTrace();
@@ -220,6 +220,7 @@ public class Bailiff
         public void run ()
         {
             //agents.put(myID, myObj);
+            modifyMap(myID, myObj, "put");
             try {
                 myMethod.invoke (myObj, myArgs);
             }
@@ -229,6 +230,7 @@ public class Bailiff
                 }
             }
             //agents.remove(myID, myObj);
+            modifyMap(myID, myObj, "remove");
         }
         /**Method called from migrate() to get the agents ID*/
         public String getID(Object myObj) throws NoSuchMethodException {
@@ -312,7 +314,7 @@ public class Bailiff
      * @throws NoSuchMethodException Thrown if the specified entry method
      * does not exist with the expected signature.
      */
-    public void migrate (Object obj, String cb, Object [] args)
+    public void migrate (Object obj, String cb, Object [] args, boolean amIIt, String id)
             throws
             java.rmi.RemoteException,
             java.lang.NoSuchMethodException
@@ -324,11 +326,56 @@ public class Bailiff
             log.entry ("<migrate obj=\"" + obj + "\" cb=\"" + cb
                     + "\" args=\"" + args + "\"/>");
         }
+        System.out.println("I am " + id + " and am i It?" + amIIt);
+        //If i'm it and there are more agents than me here, try to tag.
+        if(amIIt && agents.size() > 1){
+            boolean s = false; //Assume the tag will fail
+            try {
+                s = tagAnAgent(obj, id);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Call to tag succeded: " + s);
+        }
         agitator agt = new agitator (obj, cb, args);
         agt.initialize ();
-        //agents.put(myID, myObj);
         agt.start ();
-        //agents.remove();
+    }
+    public boolean tagAnAgent(Object myObj, String myID)
+            throws NoSuchMethodException,
+            InvocationTargetException,
+            IllegalAccessException {
+        Method tagMethod; //Ref. to tagging method in agent
+        Method unTagMethod; //Ref. to untagging method in agent
+
+        boolean tag = true; //Assume I won't tag myself
+        String toBeIt = findAgentToTag();
+
+        //Make sure there are more agents here than me. I also don't want to tag myself
+        while(toBeIt.equals(myID) && agents.size() > 1){
+            toBeIt = findAgentToTag();
+        }
+        System.out.println("I am " + myID + " and i want to tag " + toBeIt);
+        if(agents.size() <= 1 ) tag = false;
+        //If I would tag someone else, do it. Else just keep on moving
+        if(tag) {
+            boolean successTag; //assume it will fail
+            Object toBeTaggedObj = agents.get(toBeIt);
+            tagMethod = toBeTaggedObj.getClass().getMethod("tag");
+            //setContextClassLoader (myObj.getClass ().getClassLoader ());
+            successTag = (boolean) tagMethod.invoke(toBeTaggedObj);
+            //if tagging succeded, untag me. If succes2 = true, untagging succeded.
+            boolean successUnTag = false; //assume it will fail
+            if (successTag) {
+                unTagMethod = myObj.getClass().getMethod("unTag");
+                successUnTag = (boolean) unTagMethod.invoke(myObj);
+            }
+            System.out.println("Tagging succeded " + successTag + "! UnTagging succeded: " + successUnTag + "!");
+            return (successTag && successUnTag);
+        }
+        return false;
     }
 
     /*Answers the question if the agent is it*/
@@ -394,10 +441,23 @@ public class Bailiff
         int i = 0;
         for (Map.Entry<String, Object> entry: agents.entrySet()) {
             names[i] = entry.getKey();
-            System.out.println("names: " + names[i]);
             i++;
         }
         return names;
+    }
+    public String findAgentToTag(){
+        String [] agts = getNames();
+        Random random = new Random();
+        String toBeIt = agts[random.nextInt(agents.size())];
+        return toBeIt;
+    }
+    synchronized void modifyMap(String id, Object obj, String choice){
+        if(choice.equals("put")){
+            agents.put(id, obj);
+        }
+        else if(choice.equals("remove")){
+            agents.remove(id, obj);
+        }
     }
 
     /**
