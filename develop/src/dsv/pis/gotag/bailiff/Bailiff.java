@@ -332,7 +332,10 @@ public class Bailiff
             log.entry ("<migrate obj=\"" + obj + "\" cb=\"" + cb
                     + "\" args=\"" + args + "\"/>");
         }
-        System.out.println("I am " + id + " and am i It?" + amIIt);
+        if(amIIt) {
+            System.out.println(id.substring(0, 4) + " --- it");
+        }
+        else System.out.println(id.substring(0, 4) + " --- not it");
 
         //If i'm it and there are more agents than me here, try to tag. Used in first implementation
         /*if(amIIt && agents.size() > 1){
@@ -396,14 +399,7 @@ public class Bailiff
             InvocationTargetException,
             IllegalAccessException{
         Method tagMethod;
-        Method semMethod;
-        //Method unTagMethod;
         Object toBeTaggedObj = agents.get(agent);
-
-        //Try to get acquire the semaphore for the agent to be tagged
-        //boolean gotSemaphore = false;
-        //semMethod = toBeTaggedObj.getClass().getMethod("acquireSemaphore");
-        //gotSemaphore = (boolean) semMethod.invoke(toBeTaggedObj);
 
         boolean successTag = false;
         tagMethod = toBeTaggedObj.getClass().getMethod("tag");
@@ -491,19 +487,16 @@ public class Bailiff
             java.net.UnknownHostException,
             java.net.UnknownServiceException
     {
-        String [] agts = getNames();
+        ArrayList nameList = new ArrayList();
         Random random = new Random();
-        String [] notMe = new String[agts.length];
-        for(int i = 0; i < agts.length; i++){
-            if(agts[i].equals(myID)){
-                continue;
-            }
-            else{
-                notMe[i] = agts[i];
+        int i = 0;
+        //Get all names (except mine) into arraylist so we can get a random value
+        for (Map.Entry<String, Object> entry: agents.entrySet()) {
+            if(!entry.getKey().equals(myID)){
+                nameList.add(entry.getKey());
             }
         }
-        String toBeIt = notMe[random.nextInt(notMe.length)];
-        System.out.println("findAgentToTag returns " + toBeIt + "there was " + notMe.length + " in this bailiff");
+        String toBeIt = nameList.get(random.nextInt(nameList.size())).toString();
         return toBeIt;
     }
     synchronized void modifyMap(String id, Object obj, String choice){

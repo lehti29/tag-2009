@@ -212,9 +212,9 @@ public class Dexter implements Serializable
             do {
 
                 if (0 < retryInterval) {
-                    debugMsg ("No Bailiffs detected - sleeping.");
+                    //debugMsg ("No Bailiffs detected - sleeping.");
                     snooze (retryInterval);
-                    debugMsg ("Waking up.");
+                    //debugMsg ("Waking up.");
                 }
 
                 // Put our query, expressed as a service template, to the Jini
@@ -254,16 +254,12 @@ public class Dexter implements Serializable
                         e.printStackTrace ();
                     }
                 }
-                //debugMsg (accepted ? "Accepted." : "Not accepted.");
+                debugMsg (accepted ? "Accepted." : "Not accepted.");
                 boolean here = false;
                 boolean nextOne = false;
                 boolean tagOK = false;
-                boolean unTagOK = false;
-                boolean jump = true;
-                boolean someoneit = false;
                 //If i fins myself in a bailiff, then I can tag.
                 if(this.it){
-                    debugMsg("I'm it");
                     here = bfi.amIHere(this.id.toString());
                     if(here && (bfi.getNumberOfAgents() > 1)) {
                        String spotted = bfi.findAgentToTag(this.id.toString());
@@ -322,8 +318,6 @@ public class Dexter implements Serializable
                         debugMsg("Someone else is holding the lock... Go back to topLevel()");
                         topLevel();
                     }
-                    //debugMsg("Lock is locked: " + lock.isLocked());
-                    //debugMsg("Is lock held by me? " + lock.isHeldByCurrentThread());
                     try {
                         bfi.migrate(this, "topLevel", new Object[]{}, this.it, this.id.toString());
                         SDM.terminate ();	// SUCCESS
