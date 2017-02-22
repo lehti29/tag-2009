@@ -11,6 +11,7 @@ package dsv.pis.gotag.dexter;
 
 import java.io.*;
 import java.lang.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import java.awt.*;
@@ -20,9 +21,12 @@ import javax.swing.*;
 import net.jini.core.lookup.*;
 import net.jini.lookup.*;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 import dsv.pis.gotag.util.*;
 import dsv.pis.gotag.bailiff.BailiffInterface;
+import sun.security.pkcs11.wrapper.CK_LOCKMUTEX;
 
 /**
  * Dexter jumps around randomly among the Bailiffs. He is can be used
@@ -78,6 +82,9 @@ public class Dexter implements Serializable
     /*Boolean to keep track of the agent is it*/
     protected boolean it;
 
+    private Semaphore semaphore;
+    ReentrantLock lock;
+
     /**
      * This creates a new Dexter. All the constructor needs to do is to
      * instantiate the service template.
@@ -85,7 +92,7 @@ public class Dexter implements Serializable
      * @throws ClassNotFoundException Thrown if the class for the Bailiff
      * service interface could not be found.
      */
-    public Dexter (boolean debug, boolean noFace, boolean it)
+    public Dexter (boolean debug, boolean noFace, boolean it, ReentrantLock _lock)
             throws
             java.lang.ClassNotFoundException
     {
@@ -95,6 +102,8 @@ public class Dexter implements Serializable
         this.id = UUID.randomUUID();
         System.out.println("ID: " + this.id);
         this.it = it;
+        //this.semaphore = _semaphore;
+        lock = _lock;
 
         // This service template is used to query the Jini lookup server
         // for services which implement the BailiffInterface. The string
@@ -114,10 +123,19 @@ public class Dexter implements Serializable
     }
     public UUID getID(){ return this.id; }
     public boolean tag(){
-        //check if still in same bailiff.
-        this.it = true;
-        debugMsg("Inside tag method with ID: " + this.id + " , am I it? " + this.it);
-        return this.it;
+            boolean locked = lock.tryLock();
+            if(!locked){
+                debugMsg("The agent I want to tag holds the lock...");
+                return false;
+            }
+            try {
+                this.it = true;
+            } finally {
+                lock.unlock();
+            }
+            debugMsg("Inside tag method with ID: " + this.id + " , am I it? " + this.it);
+            return this.it;
+
     }
     public boolean unTag(){
         //check if still in same bailiff.
@@ -184,7 +202,8 @@ public class Dexter implements Serializable
 
             //debugMsg ("Entering restraint sleep.");
 
-            snooze (5000);
+            if(!this.it) snooze (5000);
+            else snooze(1000);
 
             //debugMsg ("Leaving restraint sleep.");
 
@@ -206,39 +225,27 @@ public class Dexter implements Serializable
                 // If no lookup servers are found, go back up to the beginning
                 // of the loop, sleep a bit and then try again.
             } while (svcItems.length == 0);
-
             // We have the Bailiffs.
-
-            debugMsg ("Found " + svcItems.length + " Bailiffs.");
-
+            //debugMsg ("Found " + svcItems.length + " Bailiffs.");
             // Now enter a loop in which we try to ping and migrate to them.
-
             int nofItems = svcItems.length;
-
             // While we still have at least one Bailiff service to try...
-
             while (0 < nofItems) {
-
                 // Select one Bailiff randomly.
-
                 int idx = 0;
                 if (1 < nofItems) {
                     idx = rnd.nextInt (nofItems);
                 }
-
                 boolean accepted = false;	    // Assume it will fail
                 Object obj = svcItems[idx].service; // Get the service object
                 BailiffInterface bfi = null;
-
                 // Try to ping the selected Bailiff.
-
                 //debugMsg ("Trying to ping...");
-
                 try {
                     if (obj instanceof BailiffInterface) {
                         bfi = (BailiffInterface) obj;
                         String response = bfi.ping (); // Ping it
-                        debugMsg (response);
+                        //debugMsg (response);
                         accepted = true;	// Oh, it worked!
                     }
                 }
@@ -247,40 +254,61 @@ public class Dexter implements Serializable
                         e.printStackTrace ();
                     }
                 }
-
-                debugMsg (accepted ? "Accepted." : "Not accepted.");
-
-                String [] names = null;
-                String agentIt = new String();
-                boolean anyAgentIt = false;
-                int numberOfAgents = bfi.getNumberOfAgents();
-                debugMsg("There are " + numberOfAgents + " in this bailiff");
-                names = bfi.getNames();
-                for(int i = 0; i < names.length; i++){
-                    if(bfi.isIt(names[i])) {
-                        debugMsg(names[i] + " is it");
-                        agentIt = names[i];
-                        anyAgentIt = true;
-                        break; //we have already found out that someone is it
+                //debugMsg (accepted ? "Accepted." : "Not accepted.");
+                boolean here = false;
+                boolean nextOne = false;
+                boolean tagOK = false;
+                boolean unTagOK = false;
+                boolean jump = true;
+                boolean someoneit = false;
+                //If i fins myself in a bailiff, then I can tag.
+                if(this.it){
+                    debugMsg("I'm it");
+                    here = bfi.amIHere(this.id.toString());
+                    if(here && (bfi.getNumberOfAgents() > 1)) {
+                       String spotted = bfi.findAgentToTag(this.id.toString());
+                        debugMsg("I am " + this.id.toString() + " I want to tag " + spotted);
+                        if(spotted != null){
+                            try {
+                                tagOK = bfi.tryToTag(spotted);
+                            } catch (NoSuchMethodException e) {
+                                e.printStackTrace();
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                            if(tagOK){
+                                this.it = false;
+                            }
+                            debugMsg("Tagged: " + tagOK + " Am i still tagged? " + this.it);
+                        }
+                    }
+                    else { //jump to new
+                        if(bfi.getNumberOfAgents() > 0 && !here){ //Someone is here, but it's not me. Jump to him
+                            nextOne = false;
+                        }
+                        else if(bfi.getNumberOfAgents() == 1 && here) nextOne = true; //I'm only one here, find new
                     }
                 }
-                //debugMsg("Is someone it here? " + anyAgentIt);
-                boolean nextOne = false;
-                //Here comes some conditions that need to be considered before migrating.
-                if(numberOfAgents <= 1 && bfi.amIHere(this.id.toString()) && this.it){
-                    //Means that I'm it and alone or no one in this bailiff. Not good
-                    nextOne = true;
+                else{//I'm not it
+                    String [] names = bfi.getNames();
+                    for(int i = 0; i < names.length; i++){
+                        //If someone is it, I don't want to jump there. Break and find new bailiff
+                        if(bfi.isIt(names[i])){
+                            nextOne = true;
+                            break;
+                        }
+                    }
                 }
-                if(!this.it && anyAgentIt){
-                    //means that i'm not it but someone is it in this bailiff. Not good
-                    nextOne = true;
-                }
+
 
                 // If the ping failed, delete that Bailiff from the array and
                 // try another. The current (idx) entry in the list of service items
                 // is replaced by the last item in the list, and the list length
                 // is decremented by one.
                 //Or if we don't want to jump to this bailiff for some reason
+                boolean locked = false;
                 if (accepted == false || nextOne) {
                     svcItems[idx] = svcItems[nofItems - 1];
                     nofItems -= 1;
@@ -289,8 +317,15 @@ public class Dexter implements Serializable
                 else {
                     debugMsg ("Trying to jump...");
                     // This is the spot where Dexter tries to migrate.
+                    locked = lock.tryLock();
+                    if(!locked){
+                        debugMsg("Someone else is holding the lock... Go back to topLevel()");
+                        topLevel();
+                    }
+                    //debugMsg("Lock is locked: " + lock.isLocked());
+                    //debugMsg("Is lock held by me? " + lock.isHeldByCurrentThread());
                     try {
-                        bfi.migrate (this, "topLevel", new Object [] {}, this.it, this.id.toString());
+                        bfi.migrate(this, "topLevel", new Object[]{}, this.it, this.id.toString());
                         SDM.terminate ();	// SUCCESS
                         if (!noFace) {
                             dexFace.stopAnimation ();
@@ -298,15 +333,17 @@ public class Dexter implements Serializable
                         }
                         return true;		// SUCCESS
                     }
-                    catch (java.rmi.RemoteException e) { // FAILURE
+                    catch (java.rmi.RemoteException | NoSuchMethodException e) { // FAILURE
                         if (debug) { e.printStackTrace (); }
-
-                    }
-                    catch (java.lang.NoSuchMethodException e) { // FAILURE
-                        if (debug) { e.printStackTrace (); }
+                    } /*catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }*/finally {
+                        //debugMsg("release lock");
+                        if(locked && lock.isHeldByCurrentThread())lock.unlock();
                     }
 
                     debugMsg ("Didn't make the jump...");
+
                 }
             }	// while there are candidates left
 
@@ -349,11 +386,12 @@ public class Dexter implements Serializable
         boolean debug = debugOption.getIsSet ();
         boolean noFace = noFaceOption.getIsSet ();
         boolean agentIsIt = itOption.getIsSet();
-
+        //Semaphore semaphore = new Semaphore(1);
+        ReentrantLock lock = new ReentrantLock();
         // We will try without it first
         // System.setSecurityManager (new RMISecurityManager ());
 
-        Dexter dx = new Dexter (debug, noFace, agentIsIt);
+        Dexter dx = new Dexter (debug, noFace, agentIsIt, lock);
         dx.topLevel ();
         System.exit (0);
     }

@@ -10,10 +10,12 @@ import java.lang.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.*;
+import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 
+import com.sun.tools.javac.util.ArrayUtils;
 import net.jini.core.entry.*;
 import net.jini.core.lookup.*;
 import net.jini.core.discovery.*;
@@ -22,6 +24,7 @@ import net.jini.lookup.*;
 import net.jini.lookup.entry.*;
 
 import dsv.pis.gotag.util.*;
+
 
 import dsv.pis.gotag.dexter.Dexter;
 import java.lang.reflect.Method;
@@ -154,6 +157,8 @@ public class Bailiff
         protected java.lang.reflect.Method idMethod; //Ref. to getID
         protected String getIDName; //Used for the method name "getID" in the agent
 
+        protected BailiffInterface thisBailiffInterface;
+
         /**
          * Creates a new agitator by copying th references to the client
          * object, the name of the entry method and the arguments to
@@ -168,6 +173,7 @@ public class Bailiff
             myCb = cb;
             myArgs = args;
             getIDName = "getID";
+            //thisBailiffInterface = bailiffInterface;
 
             //First try to get the agents id
             try {
@@ -327,8 +333,9 @@ public class Bailiff
                     + "\" args=\"" + args + "\"/>");
         }
         System.out.println("I am " + id + " and am i It?" + amIIt);
-        //If i'm it and there are more agents than me here, try to tag.
-        if(amIIt && agents.size() > 1){
+
+        //If i'm it and there are more agents than me here, try to tag. Used in first implementation
+        /*if(amIIt && agents.size() > 1){
             boolean s = false; //Assume the tag will fail
             try {
                 s = tagAnAgent(obj, id);
@@ -336,17 +343,24 @@ public class Bailiff
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
+            } catch (UnknownServiceException e) {
+                e.printStackTrace();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             }
             System.out.println("Call to tag succeded: " + s);
-        }
+        }*/
+        //should always be here
+
         agitator agt = new agitator (obj, cb, args);
         agt.initialize ();
         agt.start ();
     }
-    public boolean tagAnAgent(Object myObj, String myID)
+    //Used on first implementation
+    /*public boolean tagAnAgent(Object myObj, String myID)
             throws NoSuchMethodException,
             InvocationTargetException,
-            IllegalAccessException {
+            IllegalAccessException, RemoteException, UnknownHostException, UnknownServiceException {
         Method tagMethod; //Ref. to tagging method in agent
         Method unTagMethod; //Ref. to untagging method in agent
 
@@ -376,6 +390,30 @@ public class Bailiff
             return (successTag && successUnTag);
         }
         return false;
+    }*/
+    public boolean tryToTag(String agent)
+            throws NoSuchMethodException,
+            InvocationTargetException,
+            IllegalAccessException{
+        Method tagMethod;
+        Method semMethod;
+        //Method unTagMethod;
+        Object toBeTaggedObj = agents.get(agent);
+
+        //Try to get acquire the semaphore for the agent to be tagged
+        //boolean gotSemaphore = false;
+        //semMethod = toBeTaggedObj.getClass().getMethod("acquireSemaphore");
+        //gotSemaphore = (boolean) semMethod.invoke(toBeTaggedObj);
+
+        boolean successTag = false;
+        tagMethod = toBeTaggedObj.getClass().getMethod("tag");
+        try {
+            successTag = (boolean) tagMethod.invoke(toBeTaggedObj);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        //if tagging succeded, untag me. If succes2 = true, untagging succeded.
+        return successTag;
     }
 
     /*Answers the question if the agent is it*/
@@ -430,7 +468,10 @@ public class Bailiff
     public int getNumberOfAgents(){
         return agents.size();
     }
-    public boolean amIHere(String uuid){
+    public boolean amIHere(String uuid)throws java.rmi.RemoteException,
+            java.net.UnknownHostException,
+            java.net.UnknownServiceException
+    {
         return agents.containsKey(uuid);
     }
     public void deleteAgent(String uuid){
@@ -445,10 +486,24 @@ public class Bailiff
         }
         return names;
     }
-    public String findAgentToTag(){
+    public String findAgentToTag(String myID)
+            throws java.rmi.RemoteException,
+            java.net.UnknownHostException,
+            java.net.UnknownServiceException
+    {
         String [] agts = getNames();
         Random random = new Random();
-        String toBeIt = agts[random.nextInt(agents.size())];
+        String [] notMe = new String[agts.length];
+        for(int i = 0; i < agts.length; i++){
+            if(agts[i].equals(myID)){
+                continue;
+            }
+            else{
+                notMe[i] = agts[i];
+            }
+        }
+        String toBeIt = notMe[random.nextInt(notMe.length)];
+        System.out.println("findAgentToTag returns " + toBeIt + "there was " + notMe.length + " in this bailiff");
         return toBeIt;
     }
     synchronized void modifyMap(String id, Object obj, String choice){

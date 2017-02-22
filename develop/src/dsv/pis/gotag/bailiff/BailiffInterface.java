@@ -4,6 +4,7 @@
 // 2000-12-13/FK Adapted from earlier version.
 
 package dsv.pis.gotag.bailiff;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import dsv.pis.gotag.dexter.Dexter;
@@ -50,6 +51,33 @@ public interface BailiffInterface
             java.net.UnknownHostException,
             java.net.UnknownServiceException;
 
+  /**
+   * Method used for a dexter to find out what other dexter it want to tag
+   * @return  String that contains the uuid of the agent to be tagged.
+   * @throws java.rmi.RemoteException
+   * @throws java.net.UnknownHostException
+   * @throws java.net.UnknownServiceException
+   */
+    public String findAgentToTag(String myID)
+            throws java.rmi.RemoteException,
+            java.net.UnknownHostException,
+            java.net.UnknownServiceException;
+
+  /**
+   * Method for the dexter to tag an agent.
+   * @param agent
+   * @return  true if tagging succeded, false otherwise
+   * @throws java.rmi.RemoteException
+   * @throws java.net.UnknownHostException
+   * @throws java.net.UnknownServiceException
+   */
+  public boolean tryToTag(String agent)
+          throws java.rmi.RemoteException,
+          java.net.UnknownHostException,
+          java.net.UnknownServiceException,
+          NoSuchMethodException,
+          InvocationTargetException,
+          IllegalAccessException;
     /**
      * Method used by the agent to delete itself from the hashmap of
      * active agents in the bailiff
